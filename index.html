@@ -729,52 +729,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <div class="form__card">
           <h3>Request A Free Wedding Consultation</h3>
-          <p>Share your tentative timeline to get customized Meliá package rates.</p>
-          <div class="form__row">
-            <div class="fg"><label>Bride's Name *</label><input type="text" placeholder="e.g. Priya" id="brideName"></div>
-            <div class="fg"><label>Groom's Name *</label><input type="text" placeholder="e.g. Rohan" id="groomName"></div>
+          <p>Share your details to get a customized Meliá wedding package.</p>
+          <div class="fg"><label>Full Name *</label><input type="text" placeholder="Full name" id="fullName"></div>
+          <div class="fg"><label>Phone Number *</label><input type="tel" placeholder="+1 (___) ___-____" id="phone"></div>
+          <div class="fg"><label>Country *</label>
+            <select id="country"><option value="" disabled selected>Select country</option><option>United States</option><option>Canada</option><option>Mexico</option></select>
           </div>
-          <div class="form__row">
-            <div class="fg"><label>Your Email *</label><input type="email" placeholder="you@email.com" id="email"></div>
-            <div class="fg"><label>Country You're Based In *</label>
-              <select id="country"><option value="" disabled selected>Select country</option><option>United States</option><option>Canada</option><option>Mexico</option></select>
-            </div>
+          <div class="fg"><label>Estimated Guest Count</label><input type="number" placeholder="e.g. 150" id="guestCount"></div>
+          <div class="fg"><label>Wedding Date</label><input type="date" id="weddingDate"></div>
+          <div class="fg"><label>Estimated Budget Range</label>
+            <select id="budget"><option value="" disabled selected>Select</option><option>Under $15,000</option><option>$15,000 – $30,000</option><option>$30,000 – $75,000</option><option>$75,000+</option></select>
           </div>
-          <div class="form__row">
-            <div class="fg"><label>Wedding Date (Approx)</label><input type="date" id="weddingDate"></div>
-            <div class="fg"><label>Expected Number of Guests *</label>
-              <select id="guests"><option value="" disabled selected>Select range</option><option>Under 50 guests</option><option>50 to 100 guests</option><option>100 to 200 guests</option><option>200 to 300 guests</option><option>300+ guests</option></select>
-            </div>
-          </div>
-          <div class="form__row">
-            <div class="fg"><label>Wedding Style / Tradition</label>
-              <select id="weddingStyle"><option value="" disabled selected>Select</option><option>Hindu</option><option>Sikh</option><option>Muslim / Nikah</option><option>Jain</option><option>Multi-faith / Mixed</option><option>Other</option></select>
-            </div>
-            <div class="fg"><label>Preferred Destination</label>
-              <select id="destination"><option value="" disabled selected>Select</option><option>Riviera Maya, Mexico</option><option>Cancún, Mexico</option><option>Los Cabos, Mexico</option><option>Punta Cana, Dominican Republic</option><option>Open to Suggestions</option></select>
-            </div>
-          </div>
-          <div class="fg" style="margin-bottom:.75rem">
-            <div class="cer__chk-title">Ceremonies Planned</div>
-            <div class="cer__checks">
-              <label class="chk"><input type="checkbox" value="Haldi" class="ceremony-chk"><div class="chk__box"></div>Haldi</label>
-              <label class="chk"><input type="checkbox" value="Mehndi" class="ceremony-chk"><div class="chk__box"></div>Mehndi</label>
-              <label class="chk"><input type="checkbox" value="Sangeet" class="ceremony-chk"><div class="chk__box"></div>Sangeet</label>
-              <label class="chk"><input type="checkbox" value="Wedding Procession" class="ceremony-chk"><div class="chk__box"></div>Wedding Procession</label>
-              <label class="chk"><input type="checkbox" value="Pheras / Nikah" class="ceremony-chk"><div class="chk__box"></div>Pheras / Nikah</label>
-              <label class="chk"><input type="checkbox" value="Reception" class="ceremony-chk"><div class="chk__box"></div>Reception</label>
-            </div>
-          </div>
-          <div class="fg">
-            <div class="budget__header">
-              <span class="budget__lbl">Estimated Budget</span>
-              <span class="budget__val" id="budgetDisplay">$75,000</span>
-            </div>
-            <input type="range" id="budget" min="15000" max="300000" step="5000" value="75000" oninput="updateBudget(this.value)">
-            <div class="budget__minmax"><span>$15,000</span><span>$300,000+</span></div>
-          </div>
-          <button class="form__submit" onclick="submitForm()">Start Wedding Planning</button>
-          <p class="form__note">Your information remains confidential and is used only to plan your wedding experience.</p>
+          <button class="form__submit" onclick="submitForm()">Get a Personalized Plan</button>
+          <p class="form__note">100% free • No spam • Delivered in 24 hours</p>
         </div>
       </div>
     </div>
@@ -848,23 +815,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Form submit
     const GOOGLE_SHEET_URL='https://script.google.com/macros/s/AKfycbzBXHOdbHwOb4C8wmSxuZCCOabfWjOvgEsVPRx_7RPPMyoVvrkYj41aQFeq3_5X1qYE/exec';
     function submitForm(){
-      const req=['brideName','groomName','email','country','guests'];
+      const req=['fullName','phone'];
       let ok=true;
       req.forEach(id=>{const el=document.getElementById(id);if(!el.value.trim()){el.style.borderColor='var(--error)';ok=false;}else el.style.borderColor='';});
       if(!ok)return;
-      const ceremonies=[];
-      document.querySelectorAll('.ceremony-chk:checked').forEach(chk=>ceremonies.push(chk.value));
       const data={
-        brideName:document.getElementById('brideName').value.trim(),
-        groomName:document.getElementById('groomName').value.trim(),
-        email:document.getElementById('email').value.trim(),
-        country:document.getElementById('country').value,
-        weddingDate:document.getElementById('weddingDate').value,
-        guests:document.getElementById('guests').value,
-        weddingStyle:document.getElementById('weddingStyle').value||'',
-        destination:document.getElementById('destination').value||'',
-        ceremonies:ceremonies.join(', '),
-        budget:document.getElementById('budgetDisplay').textContent,
+        fullName:document.getElementById('fullName').value.trim(),
+        phone:document.getElementById('phone').value.trim(),
+        country:document.getElementById('country').value||'Not specified',
+        guestCount:document.getElementById('guestCount').value||'Not specified',
+        weddingDate:document.getElementById('weddingDate').value||'Not specified',
+        budget:document.getElementById('budget').value||'Not specified',
         submittedAt:new Date().toLocaleString()
       };
       window.location.href='thank.html';
