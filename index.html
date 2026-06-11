@@ -671,14 +671,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="form__card">
           <h3>Receive a Proposal Within 24 Hours</h3>
           <p>Share your details to get a customized Meliá wedding journey.</p>
-          <div class="fg"><label>Full Name *</label><input type="text" placeholder="Full name" id="fullName"></div>
-          <div class="fg"><label>Phone Number *</label><input type="tel" placeholder="+1 (___) ___-____" id="phone"></div>
-          <div class="fg"><label>Email Address *</label><input type="email" placeholder="hello@example.com" id="email"></div>
+          <div class="fg"><label>Full Name *</label><input type="text" name="fullName" placeholder="Full name" id="fullName" required></div>
+          <div class="fg"><label>Phone Number *</label><input type="tel" name="phone" placeholder="+1 (___) ___-____" id="phone" required></div>
+          <div class="fg"><label>Email Address *</label><input type="email" name="email" placeholder="hello@example.com" id="email" required></div>
           
           <div class="form__row">
-            <div class="fg"><label>Wedding Date</label><input type="date" id="weddingDate"></div>
+            <div class="fg"><label>Wedding Date</label><input type="date" name="weddingDate" id="weddingDate"></div>
             <div class="fg"><label>Estimated Guest Count *</label>
-              <select id="guestCount">
+              <select name="guestCount" id="guestCount" required>
                 <option value="" disabled selected>Select</option>
                 <option>Under 50</option>
                 <option>50–100</option>
@@ -691,7 +691,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           
           <div class="fg"><label>Estimated Budget Range</label>
-            <select id="budget"><option value="" disabled selected>Select Budget (Optional)</option><option>Under $15,000</option><option>$15,000 – $30,000</option><option>$30,000 – $75,000</option><option>$75,000+</option></select>
+            <select name="budget" id="budget"><option value="" disabled selected>Select Budget (Optional)</option><option>Under $15,000</option><option>$15,000 – $30,000</option><option>$30,000 – $75,000</option><option>$75,000+</option></select>
           </div>
           
           <button class="form__submit" onclick="submitForm()">Request a Personalised Proposal</button>
@@ -757,23 +757,36 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     window.addEventListener('load',initCardScroll);
     window.addEventListener('resize',initCardScroll);
 
-    // Form submit logic (Placeholder)
+    // Form submit with Google Sheets integration
     function submitForm(){
       const req=['fullName','phone','email','guestCount'];
       let ok=true;
       req.forEach(id=>{
         const el=document.getElementById(id);
-        if(!el.value.trim()){
-          el.style.borderColor='var(--error)';
+        if(!el || !el.value.trim()){
+          if(el)el.style.borderColor='var(--error)';
           ok=false;
         }else{
           el.style.borderColor='';
         }
       });
-      if(!ok)return;
+      if(!ok){alert('Please fill all required fields.');return;}
       
-      // Submit success logic goes here
-      alert("Thank you! Your proposal request has been sent.");
+      const scriptURL='https://script.google.com/macros/s/AKfycbzG1HKftLJMFd_hB-GlpRUp-gqN_RQ14hj45jiDjNNNc_BHOMBvN0oAEHvHNZRI5I96/exec';
+      const data={
+        timestamp: new Date().toISOString(),
+        formType: 'Melia Hotels Wedding Form',
+        fullName:document.getElementById('fullName').value.trim(),
+        phone:document.getElementById('phone').value.trim(),
+        email:document.getElementById('email').value.trim(),
+        weddingDate:document.getElementById('weddingDate').value||'Not specified',
+        guestCount:document.getElementById('guestCount').value||'Not specified',
+        budget:document.getElementById('budget').value||'Not specified'
+      };
+      const params=new URLSearchParams(data).toString();
+      fetch(scriptURL+'?'+params,{mode:'no-cors'})
+        .then(()=>{window.location.href='thank.html';})
+        .catch(()=>{window.location.href='thank.html';});
     }
   </script>
 </body>
