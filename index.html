@@ -694,12 +694,64 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <select name="budget" id="budget"><option value="" disabled selected>Select Budget (Optional)</option><option>Under $15,000</option><option>$15,000 – $30,000</option><option>$30,000 – $75,000</option><option>$75,000+</option></select>
           </div>
           
-          <button class="form__submit" onclick="submitForm()">Request a Personalised Proposal</button>
+          <button class="form__submit" type="button" id="submitBtn">Request a Personalised Proposal</button>
           <p class="form__note">Your details remain private. A dedicated specialist will respond within 24 hours, no spam, no obligation.</p>
         </div>
       </div>
     </div>
   </section>
+
+  <script>
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBXHOdbHwOb4C8wmSxuZCCOabfWjOvgEsVPRx_7RPPMyoVvrkYj41aQFeq3_5X1qYE/exec';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (submitBtn) {
+      submitBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        const fullName = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const weddingDate = document.getElementById('weddingDate').value;
+        const guestCount = document.getElementById('guestCount').value;
+        const budgetRange = document.getElementById('budget').value;
+        
+        if (!fullName || !phone || !email || !guestCount) {
+          alert('Please fill all required fields');
+          return;
+        }
+        
+        const data = {
+          fullName: fullName,
+          phone: phone,
+          email: email,
+          weddingDate: weddingDate,
+          guestCount: guestCount,
+          budgetRange: budgetRange
+        };
+        
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+        
+        try {
+          const url = GOOGLE_SCRIPT_URL + '?' + new URLSearchParams(data).toString();
+          await fetch(url, { mode: 'no-cors' });
+          
+          setTimeout(() => {
+            window.location.href = 'thank.html';
+          }, 500);
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error submitting form. Please try again.');
+          submitBtn.textContent = 'Request a Personalised Proposal';
+          submitBtn.disabled = false;
+        }
+      });
+    }
+  });
+  </script>
 
   <!-- FOOTER -->
   <footer class="footer">
